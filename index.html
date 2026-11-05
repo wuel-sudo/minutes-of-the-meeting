@@ -25,6 +25,14 @@ select{width:100%;padding:10px;border:1px solid #bdcfc2;border-radius:8px;backgr
 .small{font-size:.9rem;color:#65736b}.center{text-align:center}.big-number{font-size:2.5rem;color:var(--green);font-weight:bold}
 a.game{display:inline-block;background:var(--gold);color:#2d332d;text-decoration:none;padding:13px 18px;border-radius:10px;font-weight:bold}
 @media(max-width:600px){header{padding:14px 18px}.slide{min-height:0}nav button{flex:1}}
+
+.motivation-actions{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:14px 0 18px}
+.game-frame{width:100%;height:68vh;min-height:420px;border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#f5f7f4}
+.game-frame iframe{display:block;width:100%;height:100%;border:0}
+.game-frame:fullscreen{width:100vw;height:100vh;border:0;border-radius:0;background:white}
+.game-frame:fullscreen iframe{width:100%;height:100%}
+@media(max-width:600px){.game-frame{height:65vh;min-height:360px}}
+
 </style>
 </head>
 <body>
@@ -39,15 +47,19 @@ a.game{display:inline-block;background:var(--gold);color:#2d332d;text-decoration
 </section>
 
 <section class="slide">
- <div class="kicker">Motivation · Try to Remember</div><h2>Explore the virtual meeting room!</h2>
- <p>Open the class motivation game. Explore the room and inspect the documents. You will have <b>20 seconds</b> to study the Attendance Sheet and answer the questions in the activity.</p>
- <p><a class="game" href="https://wuel-sudo.github.io/try-to-remember/" target="_blank" rel="noopener">Launch Try to Remember ↗</a></p>
- <div class="grid">
-  <div class="part"><h3>Round 1</h3><ul><li>How many groups are present?</li><li>Who is absent?</li><li>Who is the Secretary?</li></ul></div>
-  <div class="part"><h3>Round 2</h3><ul><li>Who researches the topic and gathers references?</li><li>When is the PowerPoint due?</li><li>Who prepares the visual aids?</li></ul></div>
-  <div class="part"><h3>Round 3</h3><ul><li>When is the group rehearsal?</li><li>What three items did everyone agree to bring?</li><li>What presentation format was decided?</li></ul></div>
+ <div class="kicker">Motivation</div>
+ <div class="motivation-actions">
+  <a class="game" href="https://wuel-sudo.github.io/try-to-remember/" target="_blank" rel="noopener">Open Try to Remember ↗</a>
+  <button type="button" class="secondary" id="fullscreenGame">Full screen ⛶</button>
  </div>
- <div class="note"><b>Connect to the lesson:</b> What kind of document helps keep a written record of what was discussed and decided during a meeting?</div>
+ <div class="game-frame" id="gameFrame">
+  <iframe
+   src="https://wuel-sudo.github.io/try-to-remember/"
+   title="Try to Remember motivation game"
+   allow="fullscreen"
+   allowfullscreen>
+  </iframe>
+ </div>
 </section>
 
 <section class="slide">
@@ -139,4 +151,26 @@ document.getElementById('quiz').innerHTML=qs.map((q,i)=>`<div class="question"><
 function checkQuiz(){let score=0,answered=0;qs.forEach((q,i)=>{let a=document.querySelector(`input[name="q${i}"]:checked`);if(a){answered++;if(Number(a.value)===q[2])score++}});let f=document.getElementById('quizFeedback');f.textContent=`Your score: ${score}/5 (${answered}/5 answered).`;f.className='feedback '+(score===5?'correct':'');}
 function resetQuiz(){document.querySelectorAll('#quiz input').forEach(x=>x.checked=false);let f=document.getElementById('quizFeedback');f.textContent='';}
 </script>
+
+<script>
+document.getElementById('fullscreenGame').addEventListener('click', async function () {
+  const frame = document.getElementById('gameFrame');
+  try {
+    if (!document.fullscreenElement) {
+      await frame.requestFullscreen();
+      this.textContent = 'Exit full screen ✕';
+    } else {
+      await document.exitFullscreen();
+      this.textContent = 'Full screen ⛶';
+    }
+  } catch (error) {
+    window.open('https://wuel-sudo.github.io/try-to-remember/', '_blank', 'noopener');
+  }
+});
+document.addEventListener('fullscreenchange', function () {
+  const button = document.getElementById('fullscreenGame');
+  if (button) button.textContent = document.fullscreenElement ? 'Exit full screen ✕' : 'Full screen ⛶';
+});
+</script>
+
 </body></html>
